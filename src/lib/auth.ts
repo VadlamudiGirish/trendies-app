@@ -1,4 +1,3 @@
-// src/lib/auth.ts
 import { NextAuthOptions } from "next-auth";
 import FacebookProvider from "next-auth/providers/facebook";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
