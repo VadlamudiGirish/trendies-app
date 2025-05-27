@@ -1,17 +1,39 @@
-import {
-  getProviders,
-  signIn,
-  ClientSafeProvider,
-  getSession,
-} from "next-auth/react";
-import type { GetServerSideProps } from "next";
-import { Button, Container, Stack, Title } from "@mantine/core";
+import { useRouter } from "next/router";
+import { useSession, signIn, ClientSafeProvider } from "next-auth/react";
+import { Container, Stack, Title } from "@mantine/core";
+import { Button } from "@/components/ui/Button";
+import useSWR from "swr";
 
-interface SignInProps {
-  providers: Record<string, ClientSafeProvider>;
-}
+export default function SignIn() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const { data: providers, error } = useSWR<
+    Record<string, ClientSafeProvider>,
+    Error
+  >("/api/auth/providers");
 
-export default function SignIn({ providers }: SignInProps) {
+  // 1) While checking session
+  if (status === "loading") {
+    return <p>Loading session…</p>;
+  }
+
+  // 2) If already signed in, redirect to home
+  if (session) {
+    router.replace("/");
+    return null;
+  }
+
+  // 3) Error loading providers
+  if (error) {
+    return <p>Failed to load authentication providers.</p>;
+  }
+
+  // 4) Waiting on providers
+  if (!providers) {
+    return <p>Loading login options…</p>;
+  }
+
+  // 5) Render sign-in buttons
   return (
     <Container
       size="xs"
@@ -21,11 +43,12 @@ export default function SignIn({ providers }: SignInProps) {
         Sign in to Trendies
       </Title>
       <Stack gap="md" className="w-full">
-        {Object.values(providers).map((provider) => (
+        {(Object.values(providers!) as ClientSafeProvider[]).map((provider) => (
           <Button
             key={provider.id}
             fullWidth
             onClick={() => signIn(provider.id, { callbackUrl: "/" })}
+            color="black"
           >
             Sign in with {provider.name}
           </Button>
@@ -34,27 +57,3 @@ export default function SignIn({ providers }: SignInProps) {
     </Container>
   );
 }
-
-export const getServerSideProps: GetServerSideProps<SignInProps> = async (
-  ctx
-) => {
-  // 1) Check if there’s already a session
-  const session = await getSession(ctx);
-  if (session) {
-    // If logged in, redirect to home
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  // 2) Otherwise, fetch the providers and show the login button
-  const providers = await getProviders();
-  return {
-    props: {
-      providers: providers ?? {},
-    },
-  };
-};

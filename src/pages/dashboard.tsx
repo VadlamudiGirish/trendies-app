@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { getSession, signOut } from "next-auth/react";
-import { Button } from "@mantine/core";
+import { Button } from "@/components/ui/Button";
 import { parse } from "cookie";
 import { prisma } from "@/lib/prisma";
 import { CopyInput } from "@/components/ui/CopyInput";
@@ -15,7 +15,12 @@ export default function Dashboard({ link, referredCount }: DashboardProps) {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 flex items-center justify-between">
         Dashboard
-        <Button variant="outline" size="sm" onClick={() => signOut()}>
+        <Button
+          variant="outline"
+          size="sm"
+          color="red"
+          onClick={() => signOut()}
+        >
           Sign Out
         </Button>
       </h1>
