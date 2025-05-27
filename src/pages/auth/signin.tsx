@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useSession, signIn, ClientSafeProvider } from "next-auth/react";
 import { Container, Stack, Title } from "@mantine/core";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@mantine/core";
 import useSWR from "swr";
 
 export default function SignIn() {

@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { signOut } from "next-auth/react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@mantine/core";
 import { CopyInput } from "@/components/ui/CopyInput";
 
 // Types for successful data and API error
