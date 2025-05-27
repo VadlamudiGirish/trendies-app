@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextInput, Group } from "@mantine/core";
-import { Button } from "./Button";
+import { Button } from "@mantine/core";
 
 interface CopyInputProps {
   value: string;
