@@ -18,9 +18,9 @@ export default function SignIn({ providers }: SignInProps) {
       <Stack gap="md" className="w-full">
         {Object.values(providers).map((provider) => (
           <Button
-            key={provider.name}
+            key={provider.id}
             fullWidth
-            onClick={() => signIn(provider.id)}
+            onClick={() => signIn(provider.id, { callbackUrl: "/" })}
           >
             Sign in with {provider.name}
           </Button>

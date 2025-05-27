@@ -1,10 +1,9 @@
-import { GetServerSidePropsContext } from "next";
-import { getServerSession } from "next-auth";
+import { GetServerSideProps } from "next";
 import { signOut } from "next-auth/react";
 import { Button } from "@mantine/core";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CopyInput } from "@/components/ui/CopyInput";
+import { getSession } from "next-auth/react";
 
 export default function Dashboard({ link }: { link: string }) {
   return (
@@ -20,23 +19,33 @@ export default function Dashboard({ link }: { link: string }) {
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSession(context.req, context.res, authOptions);
-
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const session = await getSession({ req });
   if (!session) {
     return {
       redirect: {
-        destination: "/api/auth/signin",
+        destination: "/auth/signin",
         permanent: false,
       },
     };
   }
 
+  const email = session.user.email;
+  if (!email) {
+    return {
+      redirect: {
+        destination: "/auth/signin",
+        permanent: false,
+      },
+    };
+  }
   const user = await prisma.user.findUnique({
-    where: { email: session.user?.email || undefined },
+    where: { email },
   });
 
-  const link = `${process.env.NEXTAUTH_URL}/referral/${user?.referralCode}`;
-
-  return { props: { link } };
-}
+  return {
+    props: {
+      link: `${process.env.NEXTAUTH_URL}/referral/${user!.referralCode}`,
+    },
+  };
+};
