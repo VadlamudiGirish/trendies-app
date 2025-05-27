@@ -1,26 +1,45 @@
-import { GetServerSideProps } from "next";
-import { getSession, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
-import { parse } from "cookie";
-import { prisma } from "@/lib/prisma";
 import { CopyInput } from "@/components/ui/CopyInput";
 
-interface DashboardProps {
+// Types for successful data and API error
+type DashboardData = {
   link: string;
   referredCount: number;
-}
+};
 
-export default function Dashboard({ link, referredCount }: DashboardProps) {
+type ApiError = {
+  error: string;
+};
+
+export default function Dashboard() {
+  const router = useRouter();
+  // Allow data to be DashboardData or ApiError
+  const { data, error } = useSWR<DashboardData | ApiError>("/api/dashboard");
+
+  // 1) Initial loading
+  if (!data && !error) {
+    return <p>Loading dashboard…</p>;
+  }
+  // 2) Unauthorized case from API JSON
+  if (data && "error" in data && data.error === "Unauthorized") {
+    router.replace("/auth/signin");
+    return null;
+  }
+  // 3) Other fetch errors (network, etc)
+  if (error) {
+    return <p>Failed to load dashboard data.</p>;
+  }
+  // 4) At this point, data is DashboardData
+  const { link, referredCount } = data as DashboardData;
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 flex items-center justify-between">
         Dashboard
-        <Button
-          variant="outline"
-          size="sm"
-          color="red"
-          onClick={() => signOut()}
-        >
+        <Button variant="outline" size="sm" onClick={() => void signOut()}>
           Sign Out
         </Button>
       </h1>
@@ -34,61 +53,3 @@ export default function Dashboard({ link, referredCount }: DashboardProps) {
     </div>
   );
 }
-
-export const getServerSideProps: GetServerSideProps<DashboardProps> = async (
-  ctx
-) => {
-  // 1) Ensure user is signed in
-  const session = await getSession({ req: ctx.req });
-  if (!session?.user?.email) {
-    return {
-      redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    };
-  }
-
-  // 2) Read referral cookie
-  const cookies = ctx.req.headers.cookie ?? "";
-  const { referral: referralCode } = parse(cookies);
-
-  // 3) Load current user
-  let user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-  });
-
-  // 4) Credit referrer if not already done and prevent self-referral
-  if (referralCode && user && user.referredBy === null) {
-    const referrer = await prisma.user.findUnique({ where: { referralCode } });
-    if (referrer && referrer.id !== user.id) {
-      await prisma.$transaction([
-        // a) Mark this user as referred by the referrer
-        prisma.user.update({
-          where: { id: user.id },
-          data: { referredBy: referrer.id },
-        }),
-        // b) Increment the referrer's count
-        prisma.user.update({
-          where: { id: referrer.id },
-          data: { referredCount: { increment: 1 } },
-        }),
-      ]);
-    }
-    // Clear the referral cookie (whether credited or not)
-    ctx.res.setHeader("Set-Cookie", "referral=; Path=/; Max-Age=0");
-
-    // Reload the updated user record
-    user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-  }
-
-  // 5) Construct the referral link and pass referredCount
-  const link = `${process.env.NEXTAUTH_URL}/signup?ref=${user!.referralCode}`;
-  const referredCount = user!.referredCount;
-
-  return {
-    props: { link, referredCount },
-  };
-};
