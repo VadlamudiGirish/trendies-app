@@ -45,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   return {
     props: {
-      link: `${process.env.NEXTAUTH_URL}/referral/${user!.referralCode}`,
+      link: `${process.env.NEXTAUTH_URL}/signup?ref=${user?.referralCode}`,
     },
   };
 };
