@@ -1,4 +1,9 @@
-import { getProviders, signIn, ClientSafeProvider } from "next-auth/react";
+import {
+  getProviders,
+  signIn,
+  ClientSafeProvider,
+  getSession,
+} from "next-auth/react";
 import type { GetServerSideProps } from "next";
 import { Button, Container, Stack, Title } from "@mantine/core";
 
@@ -18,9 +23,9 @@ export default function SignIn({ providers }: SignInProps) {
       <Stack gap="md" className="w-full">
         {Object.values(providers).map((provider) => (
           <Button
-            key={provider.name}
+            key={provider.id}
             fullWidth
-            onClick={() => signIn(provider.id)}
+            onClick={() => signIn(provider.id, { callbackUrl: "/" })}
           >
             Sign in with {provider.name}
           </Button>
@@ -30,9 +35,26 @@ export default function SignIn({ providers }: SignInProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<SignInProps> = async () => {
+export const getServerSideProps: GetServerSideProps<SignInProps> = async (
+  ctx
+) => {
+  // 1) Check if there’s already a session
+  const session = await getSession(ctx);
+  if (session) {
+    // If logged in, redirect to home
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  // 2) Otherwise, fetch the providers and show the login button
   const providers = await getProviders();
   return {
-    props: { providers: providers ?? {} },
+    props: {
+      providers: providers ?? {},
+    },
   };
 };
