@@ -1,5 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth";
+import { signOut } from "next-auth/react";
+import { Button } from "@mantine/core";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CopyInput } from "@/components/ui/CopyInput";
@@ -7,7 +9,12 @@ import { CopyInput } from "@/components/ui/CopyInput";
 export default function Dashboard({ link }: { link: string }) {
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-4 flex items-center justify-between">
+        Dashboard
+        <Button variant="outline" size="sm" onClick={() => signOut()}>
+          Sign Out
+        </Button>
+      </h1>
       <CopyInput label="Your unique referral link:" value={link} />
     </div>
   );
