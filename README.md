@@ -160,15 +160,26 @@ npm run dev
 
 ## 🖥️ Usage
 
-    1. Visit Landing
-        - See marketing hero and “Login with…” button in header.
-    2. Share Referral
-        - Copy your link from the Dashboard → others hit /signup?ref=….
-    3. Sign In
-        - Authenticate via GitHub or Google.
-    4. Dashboard
-        - First visit triggers database credit; your referrer count increments.
-        - Animated “Copy Link” card and live counter update instantly.
+1. **Visit the Landing Page**  
+   - Open your browser and go to `https://trendies-app.vercel.app/`.  
+   - You’ll see a full-screen hero section introducing Trendies.  
+   - In the top-right header, locate the **Login with GitHub** and **Login with Google** buttons.
+
+2. **Sign In to Your Account**  
+   - Click **Login with GitHub** or **Login with Google**.  
+   - Complete the OAuth flow in the popup, granting the requested permissions.  
+   - You’ll be redirected automatically to your personal **Dashboard**.
+
+3. **First Dashboard Visit & Referral Credit**  
+   - On your very first Dashboard load, the app checks for a `referral` cookie.  
+     - If present, it credits your referrer (increments their `referredCount` and sets your `referredBy`), then clears the cookie.  
+   - Watch as the **Copy Link** card animates into view, showing your unique referral URL.  
+   - Your current **Referred Count** appears below the card, reflecting any new credits in real time.
+
+4. **Share Your Referral Link**  
+   - Click **Copy Link** to copy `https://trendies-app.vercel.app/signup?ref=<YOUR_CODE>` to your clipboard.  
+   - Paste and share this URL with friends via social media, email, or messaging apps.  
+   - When they sign in through that link for the first time, you’ll automatically earn referral credit—no extra steps needed on your part.
 
 ---
 
