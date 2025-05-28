@@ -18,7 +18,6 @@
 8. [Usage](#usage)
 9. [Deployment (Vercel)](#deployment-vercel)
 10. [Suggested Improvements](#suggested-improvements)
-11. [License](#license)
 
 ---
 
