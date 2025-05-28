@@ -168,7 +168,7 @@ npm run dev
 2. **Sign In to Your Account**  
    - Click **Login with GitHub** or **Login with Google**.  
    - Complete the OAuth flow in the popup, granting the requested permissions.  
-   - You’ll be redirected automatically to new landing page with link to your personal **Dashboard**.
+   - You’ll be redirected automatically to new landing page with link with name **Refer a friend** to your personal **Dashboard**.
 
 3. **First Dashboard Visit & Referral Credit**  
    - On your very first Dashboard load, the app checks for a `referral` cookie.  
