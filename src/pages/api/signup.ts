@@ -14,5 +14,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Redirect into the NextAuth sign-in flow
-  res.redirect("/");
+  res.redirect("/api/auth/signin");
 }
