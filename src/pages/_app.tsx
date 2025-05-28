@@ -6,6 +6,7 @@ import { MantineProvider } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
 import { SWRConfig } from "swr";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function App({
   Component,
@@ -18,7 +19,10 @@ export default function App({
       <SWRConfig value={{ fetcher }}>
         <MantineProvider withCssVariables>
           <Header />
-          <Component {...pageProps} />
+          <div className="pt-16 pb-16 h-screen overflow-auto">
+            <Component {...pageProps} />
+          </div>
+          <Footer />
         </MantineProvider>
       </SWRConfig>
     </SessionProvider>

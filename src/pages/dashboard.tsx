@@ -13,7 +13,7 @@ export default function Dashboard() {
   // loading
   if (!data && !error)
     return (
-      <p className="flex-1 flex items-center justify-center text-white">
+      <p className="flex-1 flex items-center justify-center text-gray-900">
         Loading dashboard…
       </p>
     );
@@ -33,7 +33,7 @@ export default function Dashboard() {
   const { link, referredCount } = data as DashboardData;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-indigo-900 text-white flex flex-col">
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col">
       <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
