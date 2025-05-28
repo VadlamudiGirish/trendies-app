@@ -25,7 +25,7 @@ export default function Header() {
           {session && (
             <Link
               href="/dashboard"
-              className={`hidden lg:block text-sm font-semibold transition-colors hover:text-blue-400 ${
+              className={`hidden lg:inline-block text-sm font-semibold transition-colors hover:text-blue-400 ${
                 isDashboard ? "text-blue-400 border-b-2 border-blue-400" : ""
               }`}
             >
@@ -60,6 +60,7 @@ export default function Header() {
             </button>
           )}
 
+          {/* Mobile menu button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
@@ -95,7 +96,12 @@ export default function Header() {
             {session && (
               <Link
                 href="/dashboard"
-                className="block rounded px-3 py-2 text-base font-semibold text-gray-300 hover:bg-gray-800 hover:text-white"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block rounded px-3 py-2 text-base font-semibold transition ${
+                  isDashboard
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                }`}
               >
                 Refer a friend
               </Link>
@@ -124,7 +130,10 @@ export default function Header() {
                   viewBox="0 0 16 16"
                   aria-hidden="true"
                 >
-                  <path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 ... Z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59c.4.074.547-.174.547-.386c0-.19-.007-.693-.01-1.36c-2.226.483-2.695-1.073-2.695-1.073c-.364-.923-.89-1.168-.89-1.168c-.727-.497.055-.487.055-.487c.803.056 1.226.825 1.226.825c.714 1.223 1.873.87 2.33.666c.072-.517.28-.87.508-1.07c-1.777-.202-3.644-.888-3.644-3.953c0-.873.312-1.588.824-2.148c-.083-.203-.357-1.017.078-2.12c0 0 .672-.215 2.2.82a7.688 7.688 0 012.005-.27c.68.003 1.366.092 2.005.27c1.526-1.035 2.197-.82 2.197-.82c.437 1.103.163 1.917.08 2.12c.513.56.823 1.275.823 2.148c0 3.073-1.868 3.748-3.648 3.947c.289.25.543.737.543 1.486c0 1.073-.01 1.937-.01 2.2c0 .214.144.463.55.384A8.001 8.001 0 0016 8c0-4.418-3.582-8-8-8z"
+                  />
                 </svg>
                 <span>Login with GitHub</span>
               </button>
