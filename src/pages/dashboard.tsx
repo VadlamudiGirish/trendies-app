@@ -1,55 +1,73 @@
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { signOut } from "next-auth/react";
-import { Button } from "@mantine/core";
-import { CopyInput } from "@/components/ui/CopyInput";
+import { motion } from "framer-motion";
+import { CopyInput } from "@/components/CopyInput";
 
-// Types for successful data and API error
-type DashboardData = {
-  link: string;
-  referredCount: number;
-};
-
-type ApiError = {
-  error: string;
-};
+type DashboardData = { link: string; referredCount: number };
+type ApiError = { error: string };
 
 export default function Dashboard() {
   const router = useRouter();
-  // Allow data to be DashboardData or ApiError
   const { data, error } = useSWR<DashboardData | ApiError>("/api/dashboard");
 
-  // 1) Initial loading
-  if (!data && !error) {
-    return <p>Loading dashboard…</p>;
-  }
-  // 2) Unauthorized case from API JSON
+  // loading
+  if (!data && !error)
+    return (
+      <p className="flex-1 flex items-center justify-center text-white">
+        Loading dashboard…
+      </p>
+    );
+  // unauthorized
   if (data && "error" in data && data.error === "Unauthorized") {
-    router.replace("/auth/signin");
+    router.replace("/");
     return null;
   }
-  // 3) Other fetch errors (network, etc)
-  if (error) {
-    return <p>Failed to load dashboard data.</p>;
-  }
-  // 4) At this point, data is DashboardData
+  // error
+  if (error)
+    return (
+      <p className="flex-1 flex items-center justify-center text-red-500">
+        Failed to load data.
+      </p>
+    );
+
   const { link, referredCount } = data as DashboardData;
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 flex items-center justify-between">
-        Dashboard
-        <Button variant="outline" size="sm" onClick={() => void signOut()}>
-          Sign Out
-        </Button>
-      </h1>
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-indigo-900 text-white flex flex-col">
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="flex-1 flex flex-col items-center justify-center p-6"
+      >
+        <motion.h1
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 drop-shadow-lg mb-8 uppercase"
+        >
+          Refer a friend
+        </motion.h1>
 
-      <CopyInput label="Your unique referral link:" value={link} />
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.4, type: "spring", stiffness: 120 }}
+          className="w-full max-w-md"
+        >
+          <CopyInput label="Referral link:" value={link} />
+        </motion.div>
 
-      <p className="mt-4 text-gray-700">
-        You’ve referred <strong>{referredCount}</strong>{" "}
-        {referredCount === 1 ? "friend" : "friends"} so far!
-      </p>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-6 text-2xl font-semibold"
+        >
+          You’ve referred <span className="text-blue-400">{referredCount}</span>{" "}
+          {referredCount === 1 ? "friend" : "friends"} so far!
+        </motion.p>
+      </motion.main>
     </div>
   );
 }

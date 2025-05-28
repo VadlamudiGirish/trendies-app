@@ -1,9 +1,11 @@
+import "@/styles/globals.css";
 import "@mantine/core/styles.css";
 
 import type { AppProps } from "next/app";
 import { MantineProvider } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
 import { SWRConfig } from "swr";
+import Header from "@/components/Header";
 
 export default function App({
   Component,
@@ -15,6 +17,7 @@ export default function App({
     <SessionProvider session={session}>
       <SWRConfig value={{ fetcher }}>
         <MantineProvider withCssVariables>
+          <Header />
           <Component {...pageProps} />
         </MantineProvider>
       </SWRConfig>
