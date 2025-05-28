@@ -12,6 +12,9 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/auth/signin",
+  },
   session: {
     strategy: "jwt", // we’ll store our custom fields in the JWT
   },

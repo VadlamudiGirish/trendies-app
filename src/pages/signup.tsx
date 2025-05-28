@@ -12,7 +12,7 @@ export default function SignupRedirect() {
       router.replace(`/api/signup?ref=${encodeURIComponent(ref)}`);
     } else {
       // No referral code → go straight to NextAuth sign-in
-      router.replace("/");
+      router.replace("/api/auth/signin");
     }
   }, [router]);
 
